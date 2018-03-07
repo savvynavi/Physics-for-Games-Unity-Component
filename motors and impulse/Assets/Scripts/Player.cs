@@ -32,7 +32,6 @@ public class Player : MonoBehaviour {
 		if(ragdoll && ragdoll.RagdollOn ){
 			return;
 		}
-		//Debug.DrawRay(transform.position, -transform.up, Color.blue, 0.2f);
 
 		jumpInput = Input.GetKeyDown(KeyCode.Space);
 
@@ -41,15 +40,15 @@ public class Player : MonoBehaviour {
 		animator.SetFloat ("Speed", vertical * speed * Time.deltaTime);
 		animator.SetBool("Jumping", !isGrounded);
 
-		//set crouch animation
+		//set crouch animation ~REMOVE MAGIC NUMBERS~
 		if(Input.GetKey(KeyCode.C)) {
 			animator.SetBool("Crouching", true);
 			controller.height = controller.height / 2;
-			controller.center = new Vector3(0, controller.height / 2f, 0);
+			controller.center = new Vector3(0, 0.93f / 2f, 0);
 		}else {
 			animator.SetBool("Crouching", false);
 			controller.height = 1.86f;
-			controller.center = new Vector3(0, controller.height / 2f, 0);
+			controller.center = new Vector3(0, 1.86f / 2f, 0);
 		}
 
 		//debug info here
@@ -59,17 +58,16 @@ public class Player : MonoBehaviour {
 	private void FixedUpdate() {
 		//if it can jump, add velocity to y direction
 		RaycastHit hit;
-		Vector3 castPos = new Vector3(transform.position.x + 0.3f, transform.position.y + 0.3f, transform.position.z + 0.3f);
-		//casts a sphere down and if the surface it's hitting is not 90 degrees 
-		if(Physics.SphereCast(castPos, 0.29f, Vector3.down, out hit, 0.1f)) {
-			//if(hit.normal.y > 0) {
-				isGrounded = true;
-			//}
+		Vector3 castPos = new Vector3(transform.position.x, transform.position.y + controller.radius + controller.skinWidth, transform.position.z);
+		//casts a sphere down and if the surface is within range, it grounds the character
+		if(Physics.SphereCast(castPos, controller.radius, Vector3.down, out hit, 0.1f)) {
+			isGrounded = true;
 
 		}else {
 			isGrounded = false;
 		}
 
+		//clamp downwards? falling off edge causes model to instantly disappear
 		if(jumpInput && isGrounded) {
 			dir.y = jmpSpeed;
 		}
