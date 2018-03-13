@@ -16,6 +16,9 @@ public class Player : MonoBehaviour {
 	public float velocityY = 0;
 	public float jmpSpeed = 6.0f;
 	public float gravity = 20.0f;
+	public bool castHit;
+	float standHeight;
+	float crouchHeight;
 	Vector3 dir = Vector3.zero;
 
 	// Use this for initialization
@@ -23,6 +26,8 @@ public class Player : MonoBehaviour {
 		controller = GetComponent<CharacterController> ();
 		animator = GetComponent<Animator> ();
 		ragdoll = GetComponent<Ragdoll> ();
+		standHeight = controller.height;
+		crouchHeight = controller.height / 2;
 	}
 	
 	// Update is called once per frame
@@ -33,7 +38,10 @@ public class Player : MonoBehaviour {
 			return;
 		}
 
-		jumpInput = Input.GetKeyDown(KeyCode.Space);
+		//prevents jumping while crouching
+		if(animator.GetBool("Crouching") == false) {
+			jumpInput = Input.GetKeyDown(KeyCode.Space);
+		}
 
 		//controller.SimpleMove (transform.up * Time.deltaTime);
 		transform.Rotate (transform.up, horizontal * speed * Time.deltaTime);
@@ -41,14 +49,19 @@ public class Player : MonoBehaviour {
 		animator.SetBool("Jumping", !isGrounded);
 
 		//set crouch animation ~REMOVE MAGIC NUMBERS~
-		if(Input.GetKey(KeyCode.C)) {
+		RaycastHit hit;
+		//this math is wrong somewhere (crouch happens during normal walk cycle now)
+		Vector3 castPos = new Vector3(transform.position.x, transform.position.y + controller.height - controller.radius - controller.skinWidth, transform.position.z);
+		castHit = Physics.SphereCast(castPos, controller.radius, Vector3.up, out hit, 0.01f);
+		//if either C is down Or C is up but the spherecast hits something above it (eg it can't stand up again), goes into crouch animation, otherwise does walk
+		if(Input.GetKey(KeyCode.C) || castHit) {
 			animator.SetBool("Crouching", true);
-			controller.height = controller.height / 2;
-			controller.center = new Vector3(0, 0.93f / 2f, 0);
-		}else {
+			controller.height = crouchHeight;
+			controller.center = new Vector3(0, crouchHeight / 2f, 0);
+		}else{
 			animator.SetBool("Crouching", false);
-			controller.height = 1.86f;
-			controller.center = new Vector3(0, 1.86f / 2f, 0);
+			controller.height = standHeight;
+			controller.center = new Vector3(0, standHeight / 2f, 0);
 		}
 
 		//debug info here
@@ -62,7 +75,6 @@ public class Player : MonoBehaviour {
 		//casts a sphere down and if the surface is within range, it grounds the character
 		if(Physics.SphereCast(castPos, controller.radius, Vector3.down, out hit, 0.1f)) {
 			isGrounded = true;
-
 		}else {
 			isGrounded = false;
 		}
