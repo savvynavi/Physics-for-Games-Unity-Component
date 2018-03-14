@@ -51,8 +51,9 @@ public class Player : MonoBehaviour {
 		//set crouch animation ~REMOVE MAGIC NUMBERS~
 		RaycastHit hit;
 		//this math is wrong somewhere (crouch happens during normal walk cycle now)
-		Vector3 castPos = new Vector3(transform.position.x, transform.position.y + controller.height - controller.radius - controller.skinWidth, transform.position.z);
-		castHit = Physics.SphereCast(castPos, controller.radius, Vector3.up, out hit, 0.01f);
+		Vector3 castPosTop = new Vector3(transform.position.x, transform.position.y + controller.height - controller.radius - controller.skinWidth, transform.position.z);
+        LayerMask layermask = (1 << 9);
+        castHit = Physics.SphereCast(castPosTop, controller.radius, Vector3.up, out hit, 0.5f, ~layermask);
 		//if either C is down Or C is up but the spherecast hits something above it (eg it can't stand up again), goes into crouch animation, otherwise does walk
 		if(Input.GetKey(KeyCode.C) || castHit) {
 			animator.SetBool("Crouching", true);
