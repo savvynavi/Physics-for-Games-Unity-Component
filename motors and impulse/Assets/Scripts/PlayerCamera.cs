@@ -11,6 +11,7 @@ public class PlayerCamera : MonoBehaviour {
 		if(m_player != null) {
 			//follows player, no rotation yet
 			transform.position = new Vector3(m_player.position.x + m_x, m_player.position.y + m_y, m_player.position.z + m_z);
+			//transform.rotation = m_player.rotation;
 		}
 	}
 }
