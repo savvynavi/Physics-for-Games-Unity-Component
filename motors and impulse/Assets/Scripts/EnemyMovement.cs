@@ -12,7 +12,6 @@ public class EnemyMovement : MonoBehaviour {
 	Ragdoll ragdoll = null;
 	ParticleSystem particles = null;
 	public float speed = 80.0f;
-	//public float buffer = 2.0f;
 	public Transform destination;
 	public ParticleSystem particle;
 	bool isDead;
@@ -24,14 +23,14 @@ public class EnemyMovement : MonoBehaviour {
 		ragdoll = GetComponent<Ragdoll>();
 		particles = GetComponent<ParticleSystem>();
 		isDead = false;
-		//particle = GameObject.Find("Particle System").GetComponent<ParticleSystem>();
 	}
 
 	// Update is called once per frame
 	void Update () {
-		//won't track player if dead
+		//won't track player if dead/particle burst
 		if (ragdoll && ragdoll.RagdollOn){
 			agent.velocity = new Vector3(0, 0, 0);
+			agent.updateRotation = false;
 			if(isDead == false) {
 				particles.Emit(30);
 				isDead = true;
@@ -39,11 +38,15 @@ public class EnemyMovement : MonoBehaviour {
 			return;
 		}
 
-		animator.SetFloat("Speed", speed * Time.deltaTime);
-		agent.destination = destination.position;
+		
 	}
 
 	void FixedUpdate(){
-		//agent.Move(agent.destination);
+		agent.destination = destination.position;
+		if(Vector3.Distance(transform.position, destination.position) < agent.stoppingDistance){
+			animator.SetFloat("Speed", 0);
+		} else{
+			animator.SetFloat("Speed", speed * Time.deltaTime);
+		}
 	}
 }

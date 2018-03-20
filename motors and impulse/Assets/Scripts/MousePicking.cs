@@ -6,8 +6,6 @@ public class MousePicking : MonoBehaviour {
 
     Camera camera = null;
 	Ray ray;
-	public GameObject box;
-
 
 	// Use this for initialization
 	void Start () {
@@ -23,7 +21,6 @@ public class MousePicking : MonoBehaviour {
 			if(Physics.Raycast(ray, out hit) && hit.transform.tag == "Enemy"){
 				Ragdoll ragdoll = hit.transform.GetComponentInParent<Ragdoll>();
 				if (ragdoll != null){
-					//Instantiate(box, hit.point, Quaternion.identity);
 					ragdoll.RagdollOn = true;
 				}
 			}

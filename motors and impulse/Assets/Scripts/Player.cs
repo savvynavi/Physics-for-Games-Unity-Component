@@ -39,7 +39,7 @@ public class Player : MonoBehaviour {
 		}
 
 		//prevents jumping while crouching
-		if(animator.GetBool("Crouching") == false) {
+		if(animator.GetBool("Crouching") == false || animator.GetBool("Running") == false){
 			jumpInput = Input.GetKeyDown(KeyCode.Space);
 		}
 
@@ -53,6 +53,7 @@ public class Player : MonoBehaviour {
 		Vector3 castPosTop = new Vector3(transform.position.x, transform.position.y + controller.height - controller.radius - controller.skinWidth, transform.position.z);
         LayerMask layermask = (1 << 9);
         castHit = Physics.SphereCast(castPosTop, controller.radius, Vector3.up, out hit, 0.5f, ~layermask);
+		
 		//if either C is down Or C is up but the spherecast hits something above it (eg it can't stand up again), goes into crouch animation, otherwise does walk
 		if(Input.GetKey(KeyCode.C) || castHit) {
 			animator.SetBool("Crouching", true);
@@ -64,14 +65,12 @@ public class Player : MonoBehaviour {
 			controller.center = new Vector3(0, standHeight / 2f, 0);
 		}
 
-		//if(Input.GetKey(KeyCode.R)) {
-		//	animator.SetBool("Running", true);
-		//} else {
-		//	animator.SetBool("Running", false);
-		//}
-
-		//debug info here
-		print(controller.velocity);
+		//running animations
+		if (Input.GetKey(KeyCode.LeftShift)){
+			animator.SetBool("Running", true);
+		}else{
+			animator.SetBool("Running", false);
+		}
 	}
 
 	private void FixedUpdate() {
