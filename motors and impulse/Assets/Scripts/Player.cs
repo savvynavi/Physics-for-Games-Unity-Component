@@ -43,7 +43,6 @@ public class Player : MonoBehaviour {
 			jumpInput = Input.GetKeyDown(KeyCode.Space);
 		}
 
-		//controller.SimpleMove (transform.up * Time.deltaTime);
 		transform.Rotate (transform.up, horizontal * speed * Time.deltaTime);
 		animator.SetFloat ("Speed", vertical * speed * Time.deltaTime);
 		animator.SetBool("Jumping", !isGrounded);
@@ -64,6 +63,12 @@ public class Player : MonoBehaviour {
 			controller.height = standHeight;
 			controller.center = new Vector3(0, standHeight / 2f, 0);
 		}
+
+		//if(Input.GetKey(KeyCode.R)) {
+		//	animator.SetBool("Running", true);
+		//} else {
+		//	animator.SetBool("Running", false);
+		//}
 
 		//debug info here
 		print(controller.velocity);

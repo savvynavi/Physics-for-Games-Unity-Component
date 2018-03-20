@@ -5,7 +5,7 @@ using UnityEngine;
 [RequireComponent(typeof(Animator))]
 public class Ragdoll : MonoBehaviour {
 	private Animator animator = null;
-	public List<Rigidbody> rigidbodies = new List<Rigidbody>();
+	List<Rigidbody> rigidbodies = new List<Rigidbody>();
 
 	public bool RagdollOn{
 		get {return !animator.enabled;}
@@ -23,10 +23,5 @@ public class Ragdoll : MonoBehaviour {
 		foreach(Rigidbody r in rigidbodies){
 			r.isKinematic = true;
 		}
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
 	}
 }
